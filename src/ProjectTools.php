@@ -48,14 +48,14 @@ class ProjectTools {
    *
    * @return \Reyero\DrupalTools\ProjectTools\ProjectSettings
    */
-  public static function initFromDrupalSettings() {
+  public static function initFromDrupalSettings($drupal_root) {
     if (!isset(self::$settings)) {
       // First try whether it's beeen initialized in Drush RC
       if ($settings = static::initFromDrushOptions()) {
         return $settings;
       }
       else {
-        static::initFromDrupalRoot(DRUPAL_ROOT, $drupal_root);
+        static::initFromDrupalRoot($drupal_root);
       }
     }
     return static::getSettings();
@@ -160,7 +160,7 @@ class ProjectTools {
   }
 
   /**
-   * Gets project settings.
+   * Gets project environment settings.
    *
    * @return array
    */
