@@ -12,7 +12,6 @@ use Consolidation\SiteProcess\SiteProcess;
  * Share some drush command helper methods.
  */
 trait ProcessHelperCommandsTrait {
-  use SiteAliasManagerAwareTrait;
 
   /**
    * Prints output with replacements.
@@ -31,13 +30,23 @@ trait ProcessHelperCommandsTrait {
    * @see \Consolidation\SiteProcess\ProcessManagerAwareInterface::drush()
    */
   protected function runDrushCommand($command, $arguments = [], $options = [], $options_double_dash = []) {
+    $self = $this->siteAliasManager()->getSelf();
+    return $this->siteDrushCommand($self, $command, $arguments, $options, $options_double_dash);
+  }
+
+  /**
+   * Runs drush command on a site.
+   *
+   * @see \Consolidation\SiteProcess\ProcessManagerAwareInterface::drush()
+   */
+  protected function siteDrushCommand($site, $command, $arguments = [], $options = [], $options_double_dash = []) {
     $this->printMessage("INVOKE: drush @name @arguments @options",[
-      '@name' => $command,
-      '@arguments' => implode(' ', $arguments),
-      '@options' => implode(' ', $options),
+        '@name' => $command,
+        '@arguments' => implode(' ', $arguments),
+        '@options' => implode(' ', $options),
     ]);
     $self = $this->siteAliasManager()->getSelf();
-    $process = $this->processManager()->drush($self, $command, $arguments, $options, $options_double_dash);
+    $process = $this->processManager()->drush($site, $command, $arguments, $options, $options_double_dash);
 
     return $this->runProcess($process);
   }

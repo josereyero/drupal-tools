@@ -2,13 +2,15 @@
 
 namespace Reyero\DrupalTools\ProjectTools;
 
+use Reyero\DrupalTools\Settings\SettingsBase;
+
 /**
  * Project Tools helper for Global settings
  *
  * The project settings file must be located in:
  *   DRUPAL_ROOT/sites/settings.project.php
  */
-class ProjectSettings {
+class ProjectSettings extends SettingsBase {
 
   /**
    * Project information.
@@ -42,8 +44,6 @@ class ProjectSettings {
     }
   }
 
-
-
   /**
    * Gets project directories.
    *
@@ -51,6 +51,15 @@ class ProjectSettings {
    */
   public function getDirectories() {
     return $this->directories;
+  }
+
+  /**
+   * Gets projects
+   *
+   * @return array
+   */
+  public function getProjects() {
+    return $this->projects;
   }
 
   /**

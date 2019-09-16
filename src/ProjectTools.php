@@ -24,6 +24,15 @@ class ProjectTools {
   static $current_project;
 
   /**
+   * Check whether project settings are initialized.
+   *
+   * @return boolean
+   */
+  public static function isInitialized() {
+    return isset(self::$settings);
+  }
+
+  /**
    * Initialize from root paths.
    *
    * @param string $drupal_root
@@ -32,7 +41,7 @@ class ProjectTools {
    * @return \Reyero\DrupalTools\ProjectTools\ProjectSettings
    */
   public static function initFromDrupalRoot($drupal_root = NULL) {
-    if (!isset(self::$settings)) {
+    if (!static::isInitialized()) {
       $settings_path = $drupal_root . '/sites/settings.project.php';
       static::initFromSettingsPath($settings_path, ['drupal_root' => $drupal_root]);
     }
@@ -49,38 +58,10 @@ class ProjectTools {
    * @return \Reyero\DrupalTools\ProjectTools\ProjectSettings
    */
   public static function initFromDrupalSettings($drupal_root) {
-    if (!isset(self::$settings)) {
-      // First try whether it's beeen initialized in Drush RC
-      if ($settings = static::initFromDrushOptions()) {
-        return $settings;
-      }
-      else {
-        static::initFromDrupalRoot($drupal_root);
-      }
+    if (!static::isInitialized()) {
+      static::initFromDrupalRoot($drupal_root);
     }
     return static::getSettings();
-  }
-
-  /**
-   * Try to initialize from drush options.
-   *
-   * @return \Reyero\DrupalTools\ProjectTools\ProjectSettings|NULL.
-   */
-  public static function initFromDrushOptions() {
-    if (!isset(self::$settings)) {
-      if (PHP_SAPI === 'cli' && function_exists('drush_get_option')) {
-        if ($project_settings = drush_get_option('project_settings')) {
-          $settings['projects'] = $project_settings;
-          $settings['directories'] = drush_get_option('project_directories', array());
-          $settings['environments'] = drush_get_option('project_environments', array());
-          self::$settings = new ProjectSettings($settings);
-          return self::$settings;
-        }
-      }
-    }
-    else {
-      return static::getSettings();
-    }
   }
 
   /**
